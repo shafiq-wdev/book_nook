@@ -10,7 +10,7 @@ import { Brand } from "@/components/layout/brand";
 
 const exploreLinks = [
   { href: "/", label: "Home" },
-  { href: "/all-books", label: "All Books" },
+  { href: "/books", label: "All Books" },
 ];
 
 const socialLinks = [

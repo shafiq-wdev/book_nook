@@ -140,7 +140,7 @@ export function HeroSlider() {
                     {slide.text}
                   </p>
                   <Link
-                    href="/all-books"
+                    href="/books"
                     className={cn(
                       buttonVariants({ size: "lg" }),
                       "mt-8 bg-white text-slate-950 hover:bg-white/90"

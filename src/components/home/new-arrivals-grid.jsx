@@ -88,7 +88,7 @@ function BookDetailsDialog({ book }) {
                 "No description has been added for this book yet."}
             </p>
             <Link
-              href="/all-books"
+              href="/books"
               className={cn(
                 buttonVariants({ variant: "outline" }),
                 "w-fit"

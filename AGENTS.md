@@ -26,10 +26,10 @@ Lint baseline: do not treat these as regressions or try to "fix" them as part of
 
 ## Env and data
 
-- `.env` is gitignored but present locally; `.env.example` lists the shape. Keys actually used: `MONGODB_URI`, `MONGODB_DB`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, and optionally `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`; the `NEXT_PUBLIC_*` keys are not referenced. Never print, copy, or commit the secrets in `.env`.
+- `.env` is gitignored but present locally; `.env.example` lists the shape. Keys actually used: `MONGODB_URI`, `MONGODB_DB`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, optional `IMGBB_API_KEY` (or the `NEXT_PUBLIC_IMGBB_API_KEY` fallback) for book covers, and optionally `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`. Never print, copy, or commit the secrets in `.env`.
 - MongoDB access goes through `src/lib/mongodb.js`; DB name defaults to `booknook` (`MONGODB_DB`). `src/lib/auth.js` uses the same default DB so auth users and books share one database.
-- `getLatestBooks` (`src/lib/books.js`) silently falls back to `demoBooks` when `MONGODB_URI` is missing, the `books` collection is empty, or the query fails. Home's "New Arrivals" is the only page reading data.
-- `add-book`, `all-books`, `my-books`, and `my-borrows` are placeholder `EmptyState` pages; no book-create form exists yet.
+- `getLatestBooks` (`src/lib/books.js`) silently falls back to `demoBooks` when `MONGODB_URI` is missing, the `books` collection is empty, or the query fails. Home's "New Arrivals" is the only page using the demo fallback.
+- `/add-book` is implemented: `AddBookForm` posts multipart images to `/api/upload` and book JSON to `/api/books`, which re-checks the better-auth session and inserts into `books` via `createBook`. `/api/upload` uses ImgBB when a key works; otherwise it stores the cover in the `bookImages` collection and returns `/api/images/<id>`. `/all-books` redirects to the public `/books` route, which lists saved books; `my-books` and `my-borrows` are still placeholder `EmptyState` pages.
 
 ## Auth
 

@@ -33,7 +33,7 @@ export async function NewArrivals() {
 
       <div className="mt-10 flex justify-center">
         <Link
-          href="/all-books"
+          href="/books"
           className={buttonVariants({ variant: "outline", size: "lg" })}
         >
           See All Books

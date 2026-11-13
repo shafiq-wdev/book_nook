@@ -66,7 +66,7 @@ export function TopCategories() {
           </p>
         </div>
         <Link
-          href="/all-books"
+          href="/books"
           className={buttonVariants({ variant: "ghost" })}
         >
           View all books
@@ -78,7 +78,7 @@ export function TopCategories() {
         {categories.map((category) => (
           <Link
             key={category.name}
-            href="/all-books"
+            href="/books"
             className={cn(
               "group flex items-center gap-4 rounded-2xl border bg-gradient-to-br p-5 transition-all hover:-translate-y-0.5 hover:shadow-sm",
               category.className

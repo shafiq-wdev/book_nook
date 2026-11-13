@@ -14,8 +14,60 @@ function serializeBook(book) {
     category: book.category || "Uncategorized",
     image: book.image || book.coverImage || book.imageUrl || "",
     description: book.description || "",
+    userId: book.userId ?? null,
+    userName: book.userName || "",
+    userEmail: book.userEmail || "",
     createdAt,
   };
+}
+
+export async function createBook({
+  title,
+  author,
+  category,
+  image,
+  description,
+  userId,
+  userName,
+  userEmail,
+}) {
+  const db = await getDb();
+
+  const book = {
+    title,
+    author,
+    category,
+    image,
+    description,
+    userId,
+    userName,
+    userEmail,
+    createdAt: new Date(),
+  };
+
+  const result = await db.collection("books").insertOne(book);
+
+  return serializeBook({ ...book, _id: result.insertedId });
+}
+
+export async function getAllBooks() {
+  if (!isMongoConfigured()) {
+    return { books: demoBooks, source: "demo" };
+  }
+
+  try {
+    const db = await getDb();
+    const books = await db
+      .collection("books")
+      .find({})
+      .sort({ createdAt: -1, _id: -1 })
+      .toArray();
+
+    return { books: books.map(serializeBook), source: "database" };
+  } catch (error) {
+    console.error("Unable to load books from MongoDB", error);
+    return { books: [], source: "error" };
+  }
 }
 
 export async function getLatestBooks(limit = 6) {
