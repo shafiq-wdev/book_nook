@@ -1,11 +1,10 @@
-import { BookOpenCheckIcon } from "lucide-react";
-
 import { RequireAuth } from "@/components/auth/require-auth";
-import { EmptyState } from "@/components/layout/empty-state";
+import { MyBorrows } from "@/components/books/my-borrows";
 import { PageShell } from "@/components/layout/page-shell";
 
 export const metadata = {
   title: "My Borrows",
+  description: "Books you are currently borrowing and their return dates.",
 };
 
 export default function MyBorrowsPage() {
@@ -13,13 +12,9 @@ export default function MyBorrowsPage() {
     <RequireAuth>
       <PageShell
         title="My Borrows"
-        description="Books you are currently borrowing and their due dates."
+        description="Books you are currently borrowing, with their return dates and a quick way to return them."
       >
-        <EmptyState
-          icon={BookOpenCheckIcon}
-          title="Nothing borrowed right now"
-          description="When you borrow a book, it will show up here with its return date."
-        />
+        <MyBorrows />
       </PageShell>
     </RequireAuth>
   );

@@ -1,11 +1,10 @@
-import { BookMarkedIcon } from "lucide-react";
-
 import { RequireAuth } from "@/components/auth/require-auth";
-import { EmptyState } from "@/components/layout/empty-state";
+import MyBooks from "@/components/books/my-books";
 import { PageShell } from "@/components/layout/page-shell";
 
 export const metadata = {
   title: "My Books",
+  description: "Manage the books you have added to BookNook.",
 };
 
 export default function MyBooksPage() {
@@ -13,13 +12,9 @@ export default function MyBooksPage() {
     <RequireAuth>
       <PageShell
         title="My Books"
-        description="The books you have added to BookNook and their availability."
+        description="Manage the books you have added. Edit their details or remove them from the library."
       >
-        <EmptyState
-          icon={BookMarkedIcon}
-          title="No books yet"
-          description="Once you add a book, you will see it here with its lending status."
-        />
+        <MyBooks />
       </PageShell>
     </RequireAuth>
   );

@@ -1,5 +1,9 @@
+import { ObjectId } from "mongodb";
+
 import { demoBooks } from "@/lib/demo-books";
 import { getDb, isMongoConfigured } from "@/lib/mongodb";
+
+const OBJECT_ID_PATTERN = /^[a-f0-9]{24}$/i;
 
 function serializeBook(book) {
   const createdAt =
@@ -67,6 +71,40 @@ export async function getAllBooks() {
   } catch (error) {
     console.error("Unable to load books from MongoDB", error);
     return { books: [], source: "error" };
+  }
+}
+
+export async function getBookById(id) {
+  const bookId = typeof id === "string" ? id.trim() : "";
+
+  if (!bookId) {
+    return { book: null, source: "not-found" };
+  }
+
+  const demoBook = demoBooks.find((book) => book.id === bookId) ?? null;
+
+  if (!isMongoConfigured() || !OBJECT_ID_PATTERN.test(bookId)) {
+    return demoBook
+      ? { book: demoBook, source: "demo" }
+      : { book: null, source: "not-found" };
+  }
+
+  try {
+    const db = await getDb();
+    const book = await db
+      .collection("books")
+      .findOne({ _id: new ObjectId(bookId) });
+
+    if (book) {
+      return { book: serializeBook(book), source: "database" };
+    }
+
+    return demoBook
+      ? { book: demoBook, source: "demo" }
+      : { book: null, source: "not-found" };
+  } catch (error) {
+    console.error("Unable to load a book from MongoDB", error);
+    return { book: null, source: "error" };
   }
 }
 

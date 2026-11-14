@@ -4,6 +4,7 @@ import { PageShell } from "@/components/layout/page-shell";
 
 export const metadata = {
   title: "Add Book",
+  description: "Share a new book with the BookNook community.",
 };
 
 export default function AddBookPage() {

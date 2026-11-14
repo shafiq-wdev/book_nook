@@ -8,6 +8,12 @@ import {
 } from "@/components/home/new-arrivals";
 import { TopCategories } from "@/components/home/top-categories";
 
+export const metadata = {
+  title: { absolute: "BookNook | Home" },
+  description:
+    "Discover, share, and borrow books with the BookNook community.",
+};
+
 export default function Home() {
   return (
     <div>

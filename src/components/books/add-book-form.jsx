@@ -43,6 +43,7 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import { BOOK_CATEGORIES } from "@/lib/book-categories";
+import { booksApi } from "@/lib/server-api";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -75,21 +76,7 @@ async function uploadBookImage(file) {
 }
 
 async function saveBook(book) {
-  const response = await fetch("/api/books", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(book),
-  });
-
-  const result = await readJson(response);
-
-  if (!response.ok) {
-    throw new Error(
-      result.message || "Failed to add book. Please try again."
-    );
-  }
+  const result = await booksApi.create(book);
 
   return result.book;
 }

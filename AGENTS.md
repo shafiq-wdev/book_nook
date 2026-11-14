@@ -23,13 +23,17 @@ Lint baseline: do not treat these as regressions or try to "fix" them as part of
 - Read `node_modules/next/dist/docs/` before adding routes, data fetching, or caching. The installed version is Next 16.4.6 and differs from older training data. Start with `01-app/02-guides/migrating-to-cache-components.md`, `adopting-partial-prefetching.md`, `authentication-with-cache-components.md`, and `01-app/03-api-reference/04-functions/io.md`.
 - Tailwind CSS v4 has no config file: `src/app/globals.css` imports `tailwindcss`, `tw-animate-css`, `shadcn/tailwind.css`, and Swiper CSS. Do not add `tailwind.config.*` or PostCSS config.
 - Build warns that `C:\Projects\package-lock.json` is outside this Git repo and was ignored. Harmless; set `turbopack.root` only if caching/tracing misbehaves.
+- Dynamic routes that await `params` must deal with the shared `Navbar` calling `usePathname()` outside `<Suspense>`. `/books/[id]` exports `instant = false` to allow the blocking route; without it the build fails with `CLIENT_HOOK_DYNAMIC`.
 
 ## Env and data
 
 - `.env` is gitignored but present locally; `.env.example` lists the shape. Keys actually used: `MONGODB_URI`, `MONGODB_DB`, `BETTER_AUTH_SECRET`, `BETTER_AUTH_URL`, optional `IMGBB_API_KEY` (or the `NEXT_PUBLIC_IMGBB_API_KEY` fallback) for book covers, and optionally `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`. Never print, copy, or commit the secrets in `.env`.
 - MongoDB access goes through `src/lib/mongodb.js`; DB name defaults to `booknook` (`MONGODB_DB`). `src/lib/auth.js` uses the same default DB so auth users and books share one database.
 - `getLatestBooks` (`src/lib/books.js`) silently falls back to `demoBooks` when `MONGODB_URI` is missing, the `books` collection is empty, or the query fails. Home's "New Arrivals" is the only page using the demo fallback.
-- `/add-book` is implemented: `AddBookForm` posts multipart images to `/api/upload` and book JSON to `/api/books`, which re-checks the better-auth session and inserts into `books` via `createBook`. `/api/upload` uses ImgBB when a key works; otherwise it stores the cover in the `bookImages` collection and returns `/api/images/<id>`. `/all-books` redirects to the public `/books` route, which lists saved books; `my-books` and `my-borrows` are still placeholder `EmptyState` pages.
+- Book and borrow writes go through the sibling Express API in `BookNook_Server` (`npm run dev`, port 8000), called by `src/lib/server-api.js` with `credentials: "include"`. Set `NEXT_PUBLIC_SERVER_BASE_URL=http://localhost:8000`. Private API routes verify the better-auth cookie by calling `CLIENT_URL/api/auth/get-session`, so run both apps on `localhost` (never mix in `127.0.0.1`, which breaks the `SameSite=Lax` cookie).
+- `/add-book` posts the cover to `/api/upload`, then creates the book with `booksApi.create` (`POST /books`). `/api/upload` uses ImgBB when a key works; otherwise it stores the cover in the `bookImages` collection and returns `/api/images/<id>`. `/all-books` redirects to the public `/books` route.
+- `/books/[id]` is the private book details page (`RequireAuth`), rendered by `src/components/books/book-details.jsx` from `getBookById`. `"View Details"` on every card links here; the grid no longer opens a dialog. Borrowing opens a dialog with the read-only user name/email and calls `POST /borrows`; the owner cannot borrow their own book, duplicates return 409, and demo books cannot be borrowed.
+- `/my-books` lists the signed-in user's books (`GET /books?mine=true`) and edits/deletes through the Express API; `/my-borrows` lists active borrows and returns them with `DELETE /borrows/:id`. Both render shadcn tables/dialogs and require the Express server to be running.
 
 ## Auth
 
