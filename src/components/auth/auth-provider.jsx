@@ -1,8 +1,9 @@
 "use client";
 
-import { createContext, useContext } from "react";
+import { createContext, useContext, useEffect } from "react";
 
 import { authClient } from "@/lib/auth-client";
+import { clearAuthToken } from "@/lib/server-api";
 
 const AuthContext = createContext(null);
 
@@ -28,8 +29,17 @@ function normalizeUser(user) {
 export function AuthProvider({ children }) {
   const { data: session, isPending } = authClient.useSession();
   const user = normalizeUser(session?.user);
+  const userId = session?.user?.id ?? null;
+
+  // A token is tied to one session, so drop the cached JWT whenever the
+  // signed-in reader changes (including sign-out).
+  useEffect(() => {
+    clearAuthToken();
+  }, [userId]);
 
   async function logout() {
+    clearAuthToken();
+
     const { error } = await authClient.signOut();
 
     if (error) {

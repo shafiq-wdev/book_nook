@@ -12,7 +12,7 @@ export async function AllBooks() {
   return (
     <div>
       {source === "demo" ? (
-        <p className="text-xs text-muted-foreground">
+        <p className="mb-6 text-sm leading-6 text-muted-foreground">
           Showing sample books. Connect MongoDB to load live books.
         </p>
       ) : null}
@@ -20,7 +20,7 @@ export async function AllBooks() {
       {source === "error" ? (
         <p
           role="alert"
-          className="rounded-lg border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive"
+          className="mb-6 rounded-xl border border-destructive/30 bg-destructive/5 p-4 text-sm leading-6 text-destructive"
         >
           We could not load the book list right now. Please try again.
         </p>
@@ -33,14 +33,14 @@ export async function AllBooks() {
 
 export function AllBooksSkeleton() {
   return (
-    <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
       {Array.from({ length: 6 }, (_, index) => (
         <div
           key={index}
-          className="overflow-hidden rounded-xl ring-1 ring-foreground/10"
+          className="flex h-full flex-col overflow-hidden rounded-2xl ring-1 ring-foreground/10"
         >
           <Skeleton className="aspect-[3/4] w-full rounded-none" />
-          <div className="space-y-3 p-4">
+          <div className="flex-1 space-y-3 p-4">
             <Skeleton className="h-4 w-3/4" />
             <Skeleton className="h-3 w-1/2" />
             <Skeleton className="h-8 w-full" />

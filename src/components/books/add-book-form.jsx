@@ -7,6 +7,7 @@ import {
   BookOpenIcon,
   FileTextIcon,
   ImagePlusIcon,
+  LayersIcon,
   MailIcon,
   PenLineIcon,
   TagIcon,
@@ -43,6 +44,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import { BOOK_CATEGORIES } from "@/lib/book-categories";
+import {
+  COPY_LIMITS,
+  getCopiesError,
+  parseCopies,
+} from "@/lib/copies";
 import { booksApi } from "@/lib/server-api";
 
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
@@ -88,6 +94,7 @@ export function AddBookForm() {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [category, setCategory] = useState(null);
+  const [copies, setCopies] = useState(String(COPY_LIMITS.default));
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [imagePreview, setImagePreview] = useState("");
@@ -200,6 +207,12 @@ export function AddBookForm() {
       errors.category = "Please choose a category.";
     }
 
+    const copiesError = getCopiesError(copies);
+
+    if (copiesError) {
+      errors.copies = copiesError;
+    }
+
     if (!imageFile) {
       errors.image = "Please choose a book cover image.";
     }
@@ -220,6 +233,7 @@ export function AddBookForm() {
       title: trimmedTitle,
       author: trimmedAuthor,
       category,
+      totalCopies: parseCopies(copies),
       description: trimmedDescription,
     };
   }
@@ -270,6 +284,7 @@ export function AddBookForm() {
       setTitle("");
       setAuthor("");
       setCategory(null);
+      setCopies(String(COPY_LIMITS.default));
       setDescription("");
       setFieldErrors({});
       setImageFile(null);
@@ -297,7 +312,7 @@ export function AddBookForm() {
   }
 
   return (
-    <Card className="max-w-3xl">
+    <Card className="max-w-3xl rounded-2xl">
       <CardHeader className="border-b">
         <CardTitle className="flex items-center gap-2 text-lg">
           <PenLineIcon className="size-5 text-primary" aria-hidden="true" />
@@ -415,6 +430,44 @@ export function AddBookForm() {
                 <FieldError>{fieldErrors.category}</FieldError>
               </Field>
             </div>
+
+            <Field data-invalid={Boolean(fieldErrors.copies)}>
+              <FieldLabel htmlFor="copies">
+                Total Copies <span className="text-destructive">*</span>
+              </FieldLabel>
+
+              <div className="relative">
+                <LayersIcon
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden="true"
+                />
+                <Input
+                  id="copies"
+                  name="copies"
+                  type="number"
+                  inputMode="numeric"
+                  min={COPY_LIMITS.min}
+                  max={COPY_LIMITS.max}
+                  step={1}
+                  placeholder="1"
+                  className="h-10 pl-9"
+                  value={copies}
+                  onChange={(event) => {
+                    setCopies(event.target.value);
+                    clearFieldError("copies");
+                  }}
+                  disabled={submitting}
+                  aria-invalid={Boolean(fieldErrors.copies)}
+                  required
+                />
+              </div>
+
+              <FieldDescription>
+                How many copies can readers borrow? Each borrow takes one and
+                each return gives it back.
+              </FieldDescription>
+              <FieldError>{fieldErrors.copies}</FieldError>
+            </Field>
 
             <Field data-invalid={Boolean(fieldErrors.image)}>
               <FieldLabel htmlFor="image">

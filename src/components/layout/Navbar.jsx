@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils";
 
 import { useAuth } from "@/components/auth/auth-provider";
 import { Brand } from "@/components/layout/brand";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -185,6 +186,8 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <ThemeToggle />
+
           <div className="md:hidden">
             {!isLoaded ? (
               <Skeleton className="size-8 rounded-full" />

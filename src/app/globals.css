@@ -134,13 +134,24 @@
 
 .hero-swiper .swiper-button-prev,
 .hero-swiper .swiper-button-next {
-  width: 2.75rem;
-  height: 2.75rem;
+  top: auto;
+  bottom: 1.25rem;
+  margin-top: 0;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 9999px;
   background: rgb(255 255 255 / 0.14);
   color: #fff;
   backdrop-filter: blur(10px);
   transition: background-color 150ms ease;
+}
+
+.hero-swiper .swiper-button-prev {
+  left: 1.25rem;
+}
+
+.hero-swiper .swiper-button-next {
+  right: 1.25rem;
 }
 
 .hero-swiper .swiper-button-prev:hover,

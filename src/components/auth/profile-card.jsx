@@ -21,7 +21,7 @@ export function ProfileCard() {
   if (!user) return null;
 
   return (
-    <Card className="max-w-xl">
+    <Card className="max-w-xl rounded-2xl">
       <CardHeader>
         <CardTitle>My Profile</CardTitle>
       </CardHeader>

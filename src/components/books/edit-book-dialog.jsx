@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   BookOpenIcon,
   ImageIcon,
+  LayersIcon,
   SaveIcon,
   TagIcon,
   UserIcon,
@@ -37,6 +38,12 @@ import { Spinner } from "@/components/ui/spinner";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "@/components/ui/toast";
 import { BOOK_CATEGORIES } from "@/lib/book-categories";
+import {
+  COPY_LIMITS,
+  getCopiesError,
+  getCopyState,
+  parseCopies,
+} from "@/lib/copies";
 import { booksApi } from "@/lib/server-api";
 
 const MAX_TITLE_LENGTH = 150;
@@ -49,6 +56,7 @@ const EMPTY_FORM = {
   category: "",
   image: "",
   description: "",
+  totalCopies: COPY_LIMITS.default,
 };
 
 function bookToForm(book) {
@@ -60,6 +68,7 @@ function bookToForm(book) {
     category: book.category ?? "",
     image: book.image ?? "",
     description: book.description ?? "",
+    totalCopies: book.totalCopies ?? COPY_LIMITS.default,
   };
 }
 
@@ -91,6 +100,12 @@ function validate(form) {
 
   if (!BOOK_CATEGORIES.includes(form.category)) {
     errors.category = "Please choose a category.";
+  }
+
+  const copiesError = getCopiesError(form.totalCopies);
+
+  if (copiesError) {
+    errors.totalCopies = copiesError;
   }
 
   if (!form.image.trim() || !isValidImageUrl(form.image.trim())) {
@@ -148,6 +163,7 @@ export function EditBookDialog({ book, open, onOpenChange, onSaved }) {
         title: form.title.trim(),
         author: form.author.trim(),
         category: form.category,
+        totalCopies: parseCopies(form.totalCopies),
         image: form.image.trim(),
         description: form.description.trim(),
       });
@@ -307,6 +323,38 @@ export function EditBookDialog({ book, open, onOpenChange, onSaved }) {
                 <FieldError>{errors.category}</FieldError>
               </Field>
             </div>
+
+            <Field data-invalid={Boolean(errors.totalCopies)}>
+              <FieldLabel htmlFor="edit-copies">Total copies</FieldLabel>
+              <div className="relative">
+                <LayersIcon
+                  className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden="true"
+                />
+                <Input
+                  id="edit-copies"
+                  type="number"
+                  inputMode="numeric"
+                  min={COPY_LIMITS.min}
+                  max={COPY_LIMITS.max}
+                  step={1}
+                  value={form.totalCopies}
+                  onChange={(event) =>
+                    updateField("totalCopies", event.target.value)
+                  }
+                  className="h-9 pl-9"
+                  disabled={saving}
+                  aria-invalid={Boolean(errors.totalCopies)}
+                  required
+                />
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {getCopyState(book).availableCopies} of{" "}
+                {getCopyState(book).totalCopies} available right now. Increasing
+                copies adds them to the shelf.
+              </p>
+              <FieldError>{errors.totalCopies}</FieldError>
+            </Field>
 
             <Field data-invalid={Boolean(errors.description)}>
               <FieldLabel htmlFor="edit-description">Description</FieldLabel>

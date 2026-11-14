@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRightIcon, BookOpenIcon, SparklesIcon } from "lucide-react";
 import { EffectFade, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "cn";
 
 import { buttonVariants } from "@/components/ui/button";
@@ -79,6 +80,7 @@ function BookStack({ title, author }) {
 export function HeroSlider() {
   const [swiper, setSwiper] = useState(null);
   const [paused, setPaused] = useState(false);
+  const reduceMotion = useReducedMotion();
 
   useEffect(() => {
     if (!swiper || paused) return undefined;
@@ -102,7 +104,7 @@ export function HeroSlider() {
         onSwiper={setSwiper}
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
-        className="hero-swiper h-[540px] w-full sm:h-[580px] lg:h-[620px]"
+        className="hero-swiper h-[560px] w-full sm:h-[600px] lg:h-[640px]"
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.title} className="h-full">
@@ -124,7 +126,7 @@ export function HeroSlider() {
                 aria-hidden="true"
               />
 
-              <div className="relative mx-auto grid h-full w-full max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_auto] lg:px-8">
+              <div className="relative mx-auto grid h-full w-full max-w-7xl items-center gap-12 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[1fr_auto] lg:px-8">
                 <div className="max-w-2xl text-white">
                   <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-medium text-white/80 backdrop-blur">
                     <SparklesIcon
@@ -133,17 +135,17 @@ export function HeroSlider() {
                     />
                     {slide.eyebrow}
                   </span>
-                  <h1 className="mt-6 font-heading text-4xl leading-tight font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+                  <h1 className="mt-5 font-heading text-[2.1rem] leading-[1.08] font-semibold tracking-tight text-balance sm:mt-6 sm:text-5xl lg:text-6xl">
                     {slide.title}
                   </h1>
-                  <p className="mt-5 max-w-xl text-base leading-7 text-white/75 sm:text-lg">
+                  <p className="mt-4 max-w-xl text-base leading-7 text-white/75 sm:mt-5 sm:text-lg sm:leading-8">
                     {slide.text}
                   </p>
                   <Link
                     href="/books"
                     className={cn(
                       buttonVariants({ size: "lg" }),
-                      "mt-8 bg-white text-slate-950 hover:bg-white/90"
+                      "mt-6 bg-white text-slate-950 hover:bg-white/90 sm:mt-8"
                     )}
                   >
                     Browse Books

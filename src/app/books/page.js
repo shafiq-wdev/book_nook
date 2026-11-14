@@ -18,17 +18,13 @@ export default function AllBooksPage() {
     <PageShell
       title="All Books"
       description="Browse every book shared by the BookNook community."
-    >
-      <div className="mb-2">
-        <Link
-          href="/add-book"
-          className={buttonVariants({ variant: "outline" })}
-        >
+      actions={
+        <Link href="/add-book" className={buttonVariants()}>
           <PlusIcon aria-hidden="true" />
           Add a book
         </Link>
-      </div>
-
+      }
+    >
       <Suspense fallback={<AllBooksSkeleton />}>
         <AllBooks />
       </Suspense>

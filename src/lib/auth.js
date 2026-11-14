@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { memoryAdapter } from "better-auth/adapters/memory";
 import { APIError, createAuthMiddleware } from "better-auth/api";
+import { jwt } from "better-auth/plugins";
 import { MongoClient } from "mongodb";
 
 import { getPasswordError } from "./password.js";
@@ -9,6 +10,10 @@ import { getPasswordError } from "./password.js";
 const uri = process.env.MONGODB_URI;
 const dbName = process.env.MONGODB_DB || "booknook";
 const globalForAuth = globalThis;
+
+const authBaseUrl = (
+  process.env.BETTER_AUTH_URL || "http://localhost:3000"
+).replace(/\/+$/, "");
 
 const memoryDb = (globalForAuth.__booknookAuthMemoryDb ??= {
   user: [],
@@ -54,6 +59,21 @@ export const auth = betterAuth({
     enabled: true,
     minPasswordLength: 6,
   },
+  plugins: [
+    jwt({
+      jwt: {
+        issuer: authBaseUrl,
+        audience: authBaseUrl,
+        expirationTime: "1h",
+        definePayload: ({ user }) => ({
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+        }),
+      },
+    }),
+  ],
   ...(googleClientId && googleClientSecret
     ? {
         socialProviders: {

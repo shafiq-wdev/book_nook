@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { cn } from "cn";
 
+import { Reveal } from "@/components/layout/reveal";
+import { SectionHeading } from "@/components/layout/section-heading";
 import { buttonVariants } from "@/components/ui/button";
 
 const categories = [
@@ -53,53 +55,51 @@ const categories = [
 
 export function TopCategories() {
   return (
-    <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <div className="max-w-2xl">
-          <p className="text-sm font-medium text-primary">Explore by mood</p>
-          <h2 className="mt-2 font-heading text-2xl font-semibold tracking-tight sm:text-3xl">
-            Top Categories
-          </h2>
-          <p className="mt-2 text-muted-foreground">
-            Start with a feeling and let the shelves point you toward your next
-            read.
-          </p>
-        </div>
-        <Link
-          href="/books"
-          className={buttonVariants({ variant: "ghost" })}
-        >
-          View all books
-          <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
-        </Link>
-      </div>
-
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {categories.map((category) => (
-          <Link
-            key={category.name}
-            href="/books"
-            className={cn(
-              "group flex items-center gap-4 rounded-2xl border bg-gradient-to-br p-5 transition-all hover:-translate-y-0.5 hover:shadow-sm",
-              category.className
-            )}
-          >
-            <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-background/80 text-foreground shadow-sm">
-              <category.icon className="size-5" aria-hidden="true" />
-            </span>
-            <span className="min-w-0">
-              <span className="block font-heading text-base font-semibold">
-                {category.name}
-              </span>
-              <span className="mt-0.5 block text-sm text-muted-foreground">
-                {category.description}
-              </span>
-            </span>
-            <ArrowRightIcon
-              className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
-              aria-hidden="true"
-            />
+    <section className="mx-auto w-full max-w-7xl px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+      <SectionHeading
+        eyebrow="Explore by mood"
+        title="Top Categories"
+        description="Start with a feeling and let the shelves point you toward your next read."
+        actions={
+          <Link href="/books" className={buttonVariants({ variant: "ghost" })}>
+            View all books
+            <ArrowRightIcon data-icon="inline-end" aria-hidden="true" />
           </Link>
+        }
+      />
+
+      <div className="mt-10 grid auto-rows-fr gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {categories.map((category, index) => (
+          <Reveal
+            key={category.name}
+            className="h-full"
+            delay={(index % 3) * 0.07}
+            amount={0.3}
+          >
+            <Link
+              href="/books"
+              className={cn(
+                "group flex h-full items-center gap-4 rounded-2xl border bg-gradient-to-br p-5 transition-all outline-none hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50",
+                category.className
+              )}
+            >
+              <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-background/80 text-foreground shadow-sm">
+                <category.icon className="size-5" aria-hidden="true" />
+              </span>
+              <span className="min-w-0">
+                <span className="block font-heading text-base font-semibold">
+                  {category.name}
+                </span>
+                <span className="mt-1 block text-sm leading-6 text-muted-foreground">
+                  {category.description}
+                </span>
+              </span>
+              <ArrowRightIcon
+                className="ml-auto size-4 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5"
+                aria-hidden="true"
+              />
+            </Link>
+          </Reveal>
         ))}
       </div>
     </section>

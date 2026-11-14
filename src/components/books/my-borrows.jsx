@@ -183,7 +183,7 @@ export function MyBorrows() {
       ) : null}
 
       {!loading && !error && borrows.length > 0 ? (
-        <Card className="py-0">
+        <Card className="rounded-2xl py-0">
           <CardContent className="p-0">
             <Table>
               <TableHeader className="bg-muted/40">
@@ -200,7 +200,7 @@ export function MyBorrows() {
                   <TableRow key={borrow.id}>
                     <TableCell className="pl-4">
                       <div className="flex min-w-52 items-center gap-3">
-                        <div className="h-14 w-10 shrink-0 overflow-hidden rounded-md bg-muted ring-1 ring-foreground/10">
+                        <div className="aspect-[3/4] w-10 shrink-0 overflow-hidden rounded-md bg-muted ring-1 ring-foreground/10">
                           <BookThumbnail
                             image={borrow.bookImage}
                             title={borrow.bookTitle}

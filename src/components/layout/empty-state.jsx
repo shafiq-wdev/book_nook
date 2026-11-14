@@ -6,9 +6,9 @@ export function EmptyState({ icon: Icon, title, description, action }) {
           <Icon className="size-6" aria-hidden="true" />
         </div>
       ) : null}
-      <h2 className="mt-4 font-heading text-lg font-medium">{title}</h2>
+      <h2 className="mt-4 font-heading text-lg font-semibold">{title}</h2>
       {description ? (
-        <p className="mt-1 max-w-md text-sm text-muted-foreground">
+        <p className="mt-2 max-w-md text-sm leading-6 text-muted-foreground">
           {description}
         </p>
       ) : null}

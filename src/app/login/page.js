@@ -35,7 +35,7 @@ import {
 function LoginFallback() {
   return (
     <div className="mx-auto my-10 w-full max-w-md px-5">
-      <Card>
+      <Card className="rounded-2xl">
         <CardContent className="grid gap-4 pt-6">
           <Skeleton className="mx-auto h-7 w-24" />
           <Skeleton className="mx-auto h-4 w-64 max-w-full" />
@@ -150,9 +150,9 @@ function LoginForm() {
 
   return (
     <div className="mx-auto my-10 flex w-full max-w-md flex-col gap-6 px-5">
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Login</CardTitle>
+          <CardTitle className="text-2xl">Login</CardTitle>
           <CardDescription>
             Welcome back to BookNook. Sign in to continue.
           </CardDescription>

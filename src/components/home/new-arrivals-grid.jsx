@@ -4,7 +4,8 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { BookOpenIcon } from "lucide-react";
+import { BookOpenIcon, LibraryBigIcon } from "lucide-react";
+import { motion, useReducedMotion } from "framer-motion";
 import { cn } from "cn";
 
 import { useAuth } from "@/components/auth/auth-provider";
@@ -16,8 +17,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { toast } from "@/components/ui/toast";
 import { loginHref } from "@/lib/auth-redirect";
+import { getCopyState } from "@/lib/copies";
 
 function BookCover({ book, className }) {
   const [hasError, setHasError] = useState(false);
@@ -43,19 +44,20 @@ function BookCover({ book, className }) {
       src={book.image}
       alt={`Cover of ${book.title}`}
       loading="lazy"
+      sizes="(min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
       onError={() => setHasError(true)}
       className={cn("h-full w-full object-cover", className)}
     />
   );
 }
 
-function BorrowButton({ book }) {
+function BorrowButton({ book, unavailable }) {
   const { user, isLoaded } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   function handleBorrow() {
-    if (!isLoaded) return;
+    if (!isLoaded || unavailable) return;
 
     if (!user) {
       router.push(loginHref(pathname));
@@ -69,19 +71,22 @@ function BorrowButton({ book }) {
     <Button
       type="button"
       className="flex-1"
+      variant={unavailable ? "secondary" : "default"}
       onClick={handleBorrow}
-      disabled={!isLoaded}
+      disabled={unavailable}
+      aria-disabled={unavailable}
     >
-      Borrow
+      {unavailable ? "Not Available" : "Borrow"}
     </Button>
   );
 }
 
 function BookCard({ book }) {
   const detailsHref = `/books/${book.id}`;
+  const { totalCopies, availableCopies, unavailable } = getCopyState(book);
 
   return (
-    <Card className="group flex flex-col overflow-hidden pt-0">
+    <Card className="group flex h-full flex-col overflow-hidden rounded-2xl pt-0 transition-shadow hover:shadow-md">
       <Link
         href={detailsHref}
         aria-label={`View details for ${book.title}`}
@@ -97,8 +102,17 @@ function BookCard({ book }) {
         >
           {book.category}
         </Badge>
+        {unavailable ? (
+          <Badge
+            variant="destructive"
+            className="absolute top-3 right-3 shadow-sm"
+          >
+            Not Available
+          </Badge>
+        ) : null}
       </Link>
-      <CardHeader className="gap-1">
+
+      <CardHeader className="flex-1 gap-1">
         <CardTitle className="line-clamp-2 text-base">
           <Link
             href={detailsHref}
@@ -107,8 +121,22 @@ function BookCard({ book }) {
             {book.title}
           </Link>
         </CardTitle>
-        <p className="text-sm text-muted-foreground">{book.author}</p>
+        <p className="text-sm leading-6 text-muted-foreground">{book.author}</p>
+        <p
+          className={cn(
+            "flex items-center gap-1.5 pt-1 text-xs",
+            unavailable ? "text-destructive" : "text-muted-foreground"
+          )}
+        >
+          <LibraryBigIcon className="size-3.5" aria-hidden="true" />
+          {unavailable
+            ? "All copies are borrowed"
+            : `${availableCopies} of ${totalCopies} ${
+                totalCopies === 1 ? "copy" : "copies"
+              } available`}
+        </p>
       </CardHeader>
+
       <CardFooter className="mt-auto gap-2">
         <Link
           href={detailsHref}
@@ -119,25 +147,40 @@ function BookCard({ book }) {
         >
           View Details
         </Link>
-        <BorrowButton book={book} />
+        <BorrowButton book={book} unavailable={unavailable} />
       </CardFooter>
     </Card>
   );
 }
 
 export function NewArrivalsGrid({ books }) {
+  const reduceMotion = useReducedMotion();
+
   if (books.length === 0) {
     return (
-      <p className="mt-8 rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
+      <p className="mt-10 rounded-2xl border border-dashed px-6 py-12 text-center text-sm leading-6 text-muted-foreground">
         No books have been added yet. Check back soon.
       </p>
     );
   }
 
   return (
-    <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {books.map((book) => (
-        <BookCard key={book.id} book={book} />
+    <div className="mt-10 grid auto-rows-fr gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {books.map((book, index) => (
+        <motion.div
+          key={book.id}
+          className="h-full"
+          initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.15 }}
+          transition={{
+            duration: 0.45,
+            delay: reduceMotion ? 0 : Math.min(index * 0.06, 0.3),
+            ease: [0.22, 1, 0.36, 1],
+          }}
+        >
+          <BookCard book={book} />
+        </motion.div>
       ))}
     </div>
   );

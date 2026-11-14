@@ -33,7 +33,7 @@ export default function NotFound() {
         <h1 className="mt-8 font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
           This page wandered off the shelf
         </h1>
-        <p className="mt-3 max-w-xl text-muted-foreground">
+        <p className="mt-3 max-w-xl leading-7 text-muted-foreground">
           We could not find the page you were looking for. It may have been
           moved, deleted, or it never existed.
         </p>

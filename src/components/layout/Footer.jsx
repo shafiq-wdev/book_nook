@@ -1,12 +1,13 @@
 import Link from "next/link";
-import {
-  ArrowUpRightIcon,
-  MailIcon,
-  MapPinIcon,
-  PhoneIcon,
-} from "lucide-react";
+import { MailIcon, MapPinIcon, PhoneIcon } from "lucide-react";
 
 import { Brand } from "@/components/layout/brand";
+import {
+  FacebookLogo,
+  GithubLogo,
+  InstagramLogo,
+  XLogo,
+} from "@/components/layout/social-icons";
 
 const exploreLinks = [
   { href: "/", label: "Home" },
@@ -14,10 +15,10 @@ const exploreLinks = [
 ];
 
 const socialLinks = [
-  { href: "https://facebook.com", label: "Facebook" },
-  { href: "https://instagram.com", label: "Instagram" },
-  { href: "https://x.com", label: "X" },
-  { href: "https://github.com", label: "GitHub" },
+  { href: "https://facebook.com", label: "Facebook", icon: FacebookLogo },
+  { href: "https://instagram.com", label: "Instagram", icon: InstagramLogo },
+  { href: "https://x.com", label: "X", icon: XLogo },
+  { href: "https://github.com", label: "GitHub", icon: GithubLogo },
 ];
 
 const contactItems = [
@@ -36,32 +37,39 @@ const contactItems = [
 export function Footer() {
   return (
     <footer className="mt-auto border-t bg-muted/30">
-      <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
+      <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-2 md:gap-12 lg:grid-cols-4 lg:px-8">
         <div className="lg:col-span-2">
           <Brand />
           <p className="mt-4 max-w-sm text-sm leading-6 text-muted-foreground">
             A cozy corner for readers to share the books they love, borrow
             something new, and keep every story moving.
           </p>
-          <div className="mt-5 flex flex-wrap gap-2">
-            {socialLinks.map((social) => (
-              <a
-                key={social.label}
-                href={social.href}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center gap-1 rounded-full border bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-foreground/20 hover:text-foreground"
-              >
-                {social.label}
-                <ArrowUpRightIcon className="size-3" aria-hidden="true" />
-              </a>
-            ))}
-          </div>
+
+          <ul className="mt-6 flex flex-wrap items-center gap-2">
+            {socialLinks.map((social) => {
+              const Icon = social.icon;
+
+              return (
+                <li key={social.label}>
+                  <a
+                    href={social.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={social.label}
+                    title={social.label}
+                    className="inline-flex size-9 items-center justify-center rounded-full border bg-background text-muted-foreground transition-colors outline-none hover:border-foreground/20 hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    <Icon className="size-4" aria-hidden="true" />
+                  </a>
+                </li>
+              );
+            })}
+          </ul>
         </div>
 
         <div>
           <h2 className="font-heading text-sm font-semibold">Explore</h2>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <ul className="mt-4 space-y-2.5 text-sm leading-6">
             {exploreLinks.map((link) => (
               <li key={link.href}>
                 <Link
@@ -77,7 +85,7 @@ export function Footer() {
 
         <div>
           <h2 className="font-heading text-sm font-semibold">Contact</h2>
-          <ul className="mt-4 space-y-3 text-sm">
+          <ul className="mt-4 space-y-3 text-sm leading-6">
             {contactItems.map((item) => (
               <li key={item.label}>
                 <a

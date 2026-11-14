@@ -5,11 +5,13 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeftIcon,
+  BanIcon,
   BookOpenIcon,
   CalendarDaysIcon,
   CheckIcon,
   ClockIcon,
   HandHeartIcon,
+  LibraryBigIcon,
   MailIcon,
   PenLineIcon,
   SparklesIcon,
@@ -43,6 +45,7 @@ import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 import { toast } from "@/components/ui/toast";
 import { BORROW_PERIOD_LABEL } from "@/lib/borrow-config";
+import { getCopyState } from "@/lib/copies";
 import { borrowsApi } from "@/lib/server-api";
 
 const DATE_FORMATTER = new Intl.DateTimeFormat("en-US", {
@@ -101,7 +104,7 @@ function BookCover({ book }) {
 
 function MetaTile({ icon: Icon, label, value }) {
   return (
-    <div className="rounded-xl border bg-background/70 p-3.5 backdrop-blur">
+    <div className="h-full rounded-xl border bg-background/70 p-3.5 backdrop-blur">
       <div className="flex items-center gap-1.5 text-[0.7rem] font-medium tracking-wide text-muted-foreground uppercase">
         <Icon className="size-3.5" aria-hidden="true" />
         {label}
@@ -116,7 +119,7 @@ function ContributorCard({ book, isDemo }) {
   const email = book.userEmail?.trim() || "";
 
   return (
-    <Card className="border bg-muted/30 ring-0">
+    <Card className="rounded-2xl border bg-muted/30 ring-0">
       <CardContent className="flex flex-col gap-4 py-1 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-3">
           <Avatar size="lg">
@@ -147,7 +150,7 @@ function ContributorCard({ book, isDemo }) {
   );
 }
 
-function BorrowDialog({ book, user, open, onOpenChange, onBorrowed }) {
+function BorrowDialog({ book, user, open, onOpenChange, onBorrowed, onUnavailable }) {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -162,7 +165,7 @@ function BorrowDialog({ book, user, open, onOpenChange, onBorrowed }) {
     try {
       const data = await borrowsApi.create(book.id);
 
-      onBorrowed(data.borrow);
+      onBorrowed(data.borrow, data.book);
       onOpenChange(false);
 
       toast.add({
@@ -174,16 +177,30 @@ function BorrowDialog({ book, user, open, onOpenChange, onBorrowed }) {
         timeout: 6000,
       });
     } catch (apiError) {
-      if (apiError?.status === 409 && apiError.data?.borrow) {
-        onBorrowed(apiError.data.borrow);
-        onOpenChange(false);
+      if (apiError?.status === 409) {
+        if (apiError.data?.code === "NOT_AVAILABLE") {
+          onUnavailable();
+          onOpenChange(false);
 
-        toast.add({
-          type: "info",
-          title: "Already borrowed",
-          description: `“${book.title}” is already on your borrowed list.`,
-        });
-        return;
+          toast.add({
+            type: "error",
+            title: "Not available",
+            description: `All copies of “${book.title}” are borrowed right now.`,
+          });
+          return;
+        }
+
+        if (apiError.data?.code === "ALREADY_BORROWED") {
+          if (apiError.data?.borrow) onBorrowed(apiError.data.borrow);
+          onOpenChange(false);
+
+          toast.add({
+            type: "error",
+            title: "Already borrowed",
+            description: `You cannot borrow “${book.title}” twice at the same time.`,
+          });
+          return;
+        }
       }
 
       const message =
@@ -314,7 +331,7 @@ function BorrowDialog({ book, user, open, onOpenChange, onBorrowed }) {
   );
 }
 
-function BorrowPanel({ book }) {
+function BorrowPanel({ book, copyState, onCopyStateChange }) {
   const { user } = useAuth();
   const isDemo = book.id.startsWith("demo-");
   const userEmail = user?.email?.toLowerCase();
@@ -322,9 +339,10 @@ function BorrowPanel({ book }) {
   const isOwner =
     Boolean(user?.id && book.userId && user.id === book.userId) ||
     Boolean(userEmail && ownerEmail && userEmail === ownerEmail);
+  const { availableCopies, totalCopies, unavailable } = copyState;
 
   const [borrow, setBorrow] = useState(null);
-  const [checking, setChecking] = useState(!isDemo);
+  const [checking, setChecking] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -333,6 +351,8 @@ function BorrowPanel({ book }) {
     }
 
     const controller = new AbortController();
+
+    setChecking(true);
 
     async function loadBorrowStatus() {
       try {
@@ -355,8 +375,24 @@ function BorrowPanel({ book }) {
     return () => controller.abort();
   }, [book.id, isDemo, user?.id]);
 
+  function handleBorrowed(nextBorrow, updatedBook) {
+    setBorrow(nextBorrow);
+
+    if (updatedBook) {
+      onCopyStateChange(getCopyState(updatedBook));
+    }
+  }
+
+  function handleUnavailable() {
+    onCopyStateChange((current) => ({
+      ...current,
+      availableCopies: 0,
+      unavailable: true,
+    }));
+  }
+
   const borrowed = Boolean(borrow);
-  const disabled = checking || borrowed || isOwner || isDemo;
+  const disabled = checking || borrowed || isOwner || isDemo || unavailable;
 
   let message =
     "Borrow this book and enjoy it for a couple of weeks. Your due date is tracked automatically.";
@@ -371,11 +407,17 @@ function BorrowPanel({ book }) {
     message = `You borrowed this book on ${formatDate(
       borrow.borrowedAt
     )}. Please return it by ${formatDate(borrow.dueAt)}.`;
+  } else if (unavailable) {
+    message =
+      "Every copy of this book is currently with another reader. Check back soon or browse other stories.";
+  } else if (availableCopies === 1) {
+    message =
+      "Only one copy is left on the shelf. Borrow it now and enjoy it for a couple of weeks.";
   }
 
   return (
     <>
-      <Card className="relative overflow-hidden border-0 bg-foreground text-background shadow-xl">
+      <Card className="relative overflow-hidden rounded-2xl border-0 bg-foreground text-background shadow-xl">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute -top-12 -right-10 size-44 rounded-full bg-background/10 blur-2xl"
@@ -391,12 +433,22 @@ function BorrowPanel({ book }) {
               Take this story home
             </h2>
             <p className="max-w-md text-sm text-background/70">{message}</p>
-            {!isOwner && !isDemo && !borrowed ? (
-              <p className="flex items-center gap-1.5 text-xs text-background/60">
-                <ClockIcon className="size-3.5" aria-hidden="true" />
-                {BORROW_PERIOD_LABEL} loan · return date shown instantly
-              </p>
-            ) : null}
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1 pt-1 text-xs text-background/60">
+              <span className="flex items-center gap-1.5">
+                <LibraryBigIcon className="size-3.5" aria-hidden="true" />
+                {unavailable
+                  ? "Not available right now"
+                  : `${availableCopies} of ${totalCopies} ${
+                      totalCopies === 1 ? "copy" : "copies"
+                    } available`}
+              </span>
+              {!isOwner && !isDemo && !borrowed && !unavailable ? (
+                <span className="flex items-center gap-1.5">
+                  <ClockIcon className="size-3.5" aria-hidden="true" />
+                  {BORROW_PERIOD_LABEL} loan · return date shown instantly
+                </span>
+              ) : null}
+            </div>
           </div>
 
           <Button
@@ -423,6 +475,11 @@ function BorrowPanel({ book }) {
               </>
             ) : isDemo ? (
               "Sample book"
+            ) : unavailable ? (
+              <>
+                <BanIcon aria-hidden="true" />
+                Not Available
+              </>
             ) : (
               <>
                 <BookOpenIcon aria-hidden="true" />
@@ -439,7 +496,8 @@ function BorrowPanel({ book }) {
           user={user}
           open
           onOpenChange={setDialogOpen}
-          onBorrowed={setBorrow}
+          onBorrowed={handleBorrowed}
+          onUnavailable={handleUnavailable}
         />
       ) : null}
     </>
@@ -450,6 +508,8 @@ export function BookDetails({ book }) {
   const isDemo = book.id.startsWith("demo-");
   const author = book.author?.trim() || "Unknown author";
   const category = book.category?.trim() || "Uncategorized";
+  const [copyState, setCopyState] = useState(() => getCopyState(book));
+  const { availableCopies, totalCopies, unavailable } = copyState;
 
   return (
     <section className="relative overflow-hidden">
@@ -458,7 +518,7 @@ export function BookDetails({ book }) {
         className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-80 bg-gradient-to-b from-muted/70 via-muted/20 to-transparent"
       />
 
-      <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+      <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
         <Link
           href="/books"
           className={cn(
@@ -484,7 +544,14 @@ export function BookDetails({ book }) {
                 {category}
               </Badge>
 
-              {isDemo ? (
+              {unavailable && !isDemo ? (
+                <Badge
+                  variant="destructive"
+                  className="absolute top-4 right-4 shadow-sm"
+                >
+                  Not Available
+                </Badge>
+              ) : isDemo ? (
                 <Badge
                   variant="outline"
                   className="absolute top-4 right-4 border-background/40 bg-background/90 text-foreground backdrop-blur"
@@ -514,20 +581,38 @@ export function BookDetails({ book }) {
                   Community shared
                 </Badge>
               )}
+              <Badge
+                variant={unavailable ? "destructive" : "outline"}
+                className="gap-1.5"
+              >
+                <LibraryBigIcon className="size-3" aria-hidden="true" />
+                {unavailable
+                  ? "Not Available"
+                  : `${availableCopies} of ${totalCopies} available`}
+              </Badge>
             </div>
 
-            <h1 className="mt-4 font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl lg:text-5xl">
+            <h1 className="mt-4 font-heading text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               {book.title}
             </h1>
 
-            <p className="mt-3 flex items-center gap-2 text-lg text-muted-foreground">
+            <p className="mt-3 flex items-center gap-2 text-base text-muted-foreground sm:text-lg">
               <PenLineIcon className="size-4" aria-hidden="true" />
               by <span className="font-medium text-foreground">{author}</span>
             </p>
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            <div className="mt-8 grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-4">
               <MetaTile icon={UserIcon} label="Author" value={author} />
               <MetaTile icon={TagIcon} label="Category" value={category} />
+              <MetaTile
+                icon={LibraryBigIcon}
+                label="Copies"
+                value={
+                  unavailable
+                    ? `0 of ${totalCopies} available`
+                    : `${availableCopies} of ${totalCopies} available`
+                }
+              />
               <MetaTile
                 icon={CalendarDaysIcon}
                 label="Added"
@@ -549,7 +634,11 @@ export function BookDetails({ book }) {
 
             <div className="mt-8 space-y-4">
               <ContributorCard book={book} isDemo={isDemo} />
-              <BorrowPanel book={book} />
+              <BorrowPanel
+                book={book}
+                copyState={copyState}
+                onCopyStateChange={setCopyState}
+              />
             </div>
           </div>
         </div>

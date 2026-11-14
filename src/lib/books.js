@@ -5,6 +5,22 @@ import { getDb, isMongoConfigured } from "@/lib/mongodb";
 
 const OBJECT_ID_PATTERN = /^[a-f0-9]{24}$/i;
 
+function copyFields(book) {
+  const totalCopies =
+    Number.isInteger(book?.totalCopies) && book.totalCopies > 0
+      ? book.totalCopies
+      : 1;
+  const availableCopies = Number.isInteger(book?.availableCopies)
+    ? Math.min(Math.max(book.availableCopies, 0), totalCopies)
+    : totalCopies;
+
+  return { totalCopies, availableCopies };
+}
+
+function demoBooksWithCopies() {
+  return demoBooks.map((book) => ({ ...book, ...copyFields(book) }));
+}
+
 function serializeBook(book) {
   const createdAt =
     book.createdAt instanceof Date
@@ -18,6 +34,7 @@ function serializeBook(book) {
     category: book.category || "Uncategorized",
     image: book.image || book.coverImage || book.imageUrl || "",
     description: book.description || "",
+    ...copyFields(book),
     userId: book.userId ?? null,
     userName: book.userName || "",
     userEmail: book.userEmail || "",
@@ -31,11 +48,14 @@ export async function createBook({
   category,
   image,
   description,
+  totalCopies = 1,
   userId,
   userName,
   userEmail,
 }) {
   const db = await getDb();
+  const copies =
+    Number.isInteger(totalCopies) && totalCopies > 0 ? totalCopies : 1;
 
   const book = {
     title,
@@ -43,6 +63,8 @@ export async function createBook({
     category,
     image,
     description,
+    totalCopies: copies,
+    availableCopies: copies,
     userId,
     userName,
     userEmail,
@@ -56,7 +78,7 @@ export async function createBook({
 
 export async function getAllBooks() {
   if (!isMongoConfigured()) {
-    return { books: demoBooks, source: "demo" };
+    return { books: demoBooksWithCopies(), source: "demo" };
   }
 
   try {
@@ -81,7 +103,8 @@ export async function getBookById(id) {
     return { book: null, source: "not-found" };
   }
 
-  const demoBook = demoBooks.find((book) => book.id === bookId) ?? null;
+  const demoBook =
+    demoBooksWithCopies().find((book) => book.id === bookId) ?? null;
 
   if (!isMongoConfigured() || !OBJECT_ID_PATTERN.test(bookId)) {
     return demoBook
@@ -110,7 +133,7 @@ export async function getBookById(id) {
 
 export async function getLatestBooks(limit = 6) {
   if (!isMongoConfigured()) {
-    return { books: demoBooks.slice(0, limit), source: "demo" };
+    return { books: demoBooksWithCopies().slice(0, limit), source: "demo" };
   }
 
   try {
@@ -123,12 +146,12 @@ export async function getLatestBooks(limit = 6) {
       .toArray();
 
     if (books.length === 0) {
-      return { books: demoBooks.slice(0, limit), source: "demo" };
+      return { books: demoBooksWithCopies().slice(0, limit), source: "demo" };
     }
 
     return { books: books.map(serializeBook), source: "database" };
   } catch (error) {
     console.error("Unable to load the latest books from MongoDB", error);
-    return { books: demoBooks.slice(0, limit), source: "demo" };
+    return { books: demoBooksWithCopies().slice(0, limit), source: "demo" };
   }
 }

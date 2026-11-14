@@ -52,7 +52,7 @@ async function BookDetailsContent({ params }) {
 
 function BookDetailsSkeleton() {
   return (
-    <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-12">
+    <div className="mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
       <Skeleton className="h-7 w-28" />
 
       <div className="mt-6 grid gap-10 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-14">
