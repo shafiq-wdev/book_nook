@@ -19,37 +19,37 @@ const categories = [
     name: "Fiction",
     description: "Stories that stay with you",
     icon: SparklesIcon,
-    className: "from-violet-500/15 to-indigo-500/5",
+    className: "from-clay/15 to-clay/5",
   },
   {
     name: "Mystery",
     description: "Clues, twists, and late nights",
     icon: SearchIcon,
-    className: "from-slate-500/15 to-zinc-500/5",
+    className: "from-cocoa/15 to-cocoa/5",
   },
   {
     name: "Romance",
     description: "Love stories worth sharing",
     icon: HeartIcon,
-    className: "from-rose-500/15 to-pink-500/5",
+    className: "from-blush/15 to-blush/5",
   },
   {
     name: "Science Fiction",
     description: "Other worlds and big ideas",
     icon: RocketIcon,
-    className: "from-cyan-500/15 to-sky-500/5",
+    className: "from-sage/15 to-sage/5",
   },
   {
     name: "Self Help",
     description: "Small changes, better days",
     icon: BrainIcon,
-    className: "from-amber-500/15 to-orange-500/5",
+    className: "from-caramel/15 to-caramel/5",
   },
   {
     name: "Biography",
     description: "Real lives, remarkable journeys",
     icon: UserRoundIcon,
-    className: "from-emerald-500/15 to-teal-500/5",
+    className: "from-ochre/15 to-ochre/5",
   },
 ];
 

@@ -112,7 +112,7 @@ function BookStack({ books }) {
       aria-label="Featured books"
     >
       {/* Background glow */}
-      <div className="absolute size-[280px] rounded-full bg-amber-300/20 blur-[90px] sm:size-[350px]" />
+      <div className="absolute size-[280px] rounded-full bg-honey/20 blur-[90px] sm:size-[350px]" />
 
       <div className="relative flex items-center justify-center -space-x-8 sm:-space-x-10">
         {books.map((book, index) => {
@@ -158,7 +158,7 @@ function BookStack({ books }) {
                   </div>
 
                   <div className="mt-8 sm:mt-12">
-                    <span className="text-2xl text-amber-200">
+                    <span className="text-2xl text-honey">
                       {book.symbol}
                     </span>
 
@@ -187,9 +187,9 @@ function BookStack({ books }) {
       </div>
 
       {/* Floating label */}
-      <div className="absolute bottom-0 right-0 z-20 rounded-2xl border border-white/20 bg-slate-950/80 px-4 py-3 text-white shadow-xl backdrop-blur-xl sm:bottom-5 sm:right-2">
+      <div className="absolute bottom-0 right-0 z-20 rounded-2xl border border-white/20 bg-espresso/80 px-4 py-3 text-white shadow-xl backdrop-blur-xl sm:bottom-5 sm:right-2">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-xl bg-amber-400/20 text-amber-300">
+          <div className="flex size-10 items-center justify-center rounded-xl bg-honey/20 text-honey">
             <BookOpenIcon className="size-5" />
           </div>
 
@@ -228,7 +228,7 @@ export function HeroSlider() {
   return (
     <section
       aria-label="Featured highlights"
-      className="relative overflow-hidden border-b border-border bg-slate-950"
+      className="relative overflow-hidden border-b border-border bg-espresso"
     >
       <Swiper
         modules={[EffectFade, Navigation, Pagination]}
@@ -256,20 +256,20 @@ export function HeroSlider() {
               />
 
               {/* Dark overlay */}
-              <div className="absolute inset-0 bg-slate-950/75" />
+              <div className="absolute inset-0 bg-espresso/75" />
 
               {/* Gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950 via-slate-950/85 to-slate-950/35" />
+              <div className="absolute inset-0 bg-gradient-to-r from-espresso via-espresso/85 to-espresso/35" />
 
               {/* Decorative glow */}
-              <div className="pointer-events-none absolute -right-20 top-1/2 size-[400px] -translate-y-1/2 rounded-full bg-amber-400/15 blur-[100px]" />
+              <div className="pointer-events-none absolute -right-20 top-1/2 size-[400px] -translate-y-1/2 rounded-full bg-honey/15 blur-[100px]" />
 
               {/* Content */}
               <div className="relative mx-auto grid h-full w-full max-w-7xl items-center gap-5 px-5 py-12 sm:px-8 lg:grid-cols-[1fr_1fr] lg:gap-12 lg:px-10">
                 {/* Left Content */}
                 <div className="relative z-10 max-w-2xl text-white">
                   {/* Eyebrow */}
-                  <span className="inline-flex items-center gap-2 rounded-full border border-amber-300/30 bg-amber-300/10 px-4 py-2 text-xs font-semibold text-amber-200 backdrop-blur-md sm:text-sm">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-honey/30 bg-honey/10 px-4 py-2 text-xs font-semibold text-honey backdrop-blur-md sm:text-sm">
                     <SparklesIcon className="size-4" />
                     {slide.eyebrow}
                   </span>
@@ -290,7 +290,7 @@ export function HeroSlider() {
                       href="/books"
                       className={cn(
                         buttonVariants({ size: "lg" }),
-                        "h-12 rounded-full bg-amber-400 px-7 font-semibold text-slate-950 shadow-lg shadow-amber-500/20 transition-all hover:-translate-y-1 hover:bg-amber-300"
+                        "h-12 rounded-full bg-honey px-7 font-semibold text-espresso shadow-lg shadow-honey/20 transition-all hover:-translate-y-1 hover:bg-honey/90"
                       )}
                     >
                       <BookOpenIcon className="size-5" />
@@ -303,7 +303,7 @@ export function HeroSlider() {
 
                     <div className="flex items-center gap-2 text-sm font-medium text-white/75">
                       <div className="flex size-10 items-center justify-center rounded-full border border-white/20 bg-white/10">
-                        <SparklesIcon className="size-4 text-amber-300" />
+                        <SparklesIcon className="size-4 text-honey" />
                       </div>
                       A community of readers
                     </div>
@@ -347,52 +347,6 @@ export function HeroSlider() {
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {/* Custom Slider Styling */}
-      <style jsx global>{`
-        .hero-swiper .swiper-button-next,
-        .hero-swiper .swiper-button-prev {
-          width: 42px;
-          height: 42px;
-          border: 1px solid rgba(255, 255, 255, 0.3);
-          border-radius: 50%;
-          background: rgba(15, 23, 42, 0.6);
-          color: white;
-          backdrop-filter: blur(10px);
-          transition: all 0.3s ease;
-        }
-
-        .hero-swiper .swiper-button-next:hover,
-        .hero-swiper .swiper-button-prev:hover {
-          background: #fbbf24;
-          color: #0f172a;
-        }
-
-        .hero-swiper .swiper-button-next::after,
-        .hero-swiper .swiper-button-prev::after {
-          font-size: 14px;
-          font-weight: bold;
-        }
-
-        .hero-swiper .swiper-pagination {
-          bottom: 22px !important;
-        }
-
-        .hero-swiper .swiper-pagination-bullet {
-          width: 9px;
-          height: 9px;
-          background: white;
-          opacity: 0.5;
-          transition: all 0.3s ease;
-        }
-
-        .hero-swiper .swiper-pagination-bullet-active {
-          width: 26px;
-          border-radius: 20px;
-          background: #fbbf24;
-          opacity: 1;
-        }
-      `}</style>
     </section>
   );
 }

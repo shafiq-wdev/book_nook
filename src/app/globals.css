@@ -11,6 +11,17 @@
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);
+
+    /* Warm library brand accents (theme-independent) */
+    --color-espresso: #17120d;
+    --color-caramel: #9a5b2c;
+    --color-honey: #e3a968;
+    --color-cream: #faf6ee;
+    --color-clay: #b4632a;
+    --color-cocoa: #6b4e3d;
+    --color-blush: #b54a55;
+    --color-sage: #4f6b5d;
+    --color-ochre: #8a6a2f;
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -52,72 +63,72 @@
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --background: #faf6ee;
+    --foreground: #2b2117;
+    --card: #fffcf7;
+    --card-foreground: #2b2117;
+    --popover: #fffcf7;
+    --popover-foreground: #2b2117;
+    --primary: #9a5b2c;
+    --primary-foreground: #fff8ee;
+    --secondary: #f1e6d5;
+    --secondary-foreground: #40311f;
+    --muted: #f3eadc;
+    --muted-foreground: #71604c;
+    --accent: #f0e0c6;
+    --accent-foreground: #40311f;
+    --destructive: #b42318;
+    --border: #e7dac4;
+    --input: #e7dac4;
+    --ring: #b97e45;
+    --chart-1: #c98a4b;
+    --chart-2: #a66a3a;
+    --chart-3: #7c5a34;
+    --chart-4: #5c8a6e;
+    --chart-5: #b45c4a;
+    --radius: 0.75rem;
+    --sidebar: #f6efe3;
+    --sidebar-foreground: #2b2117;
+    --sidebar-primary: #9a5b2c;
+    --sidebar-primary-foreground: #fff8ee;
+    --sidebar-accent: #efe1cb;
+    --sidebar-accent-foreground: #40311f;
+    --sidebar-border: #e7dac4;
+    --sidebar-ring: #b97e45;
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: #17120d;
+    --foreground: #f6ede0;
+    --card: #201913;
+    --card-foreground: #f6ede0;
+    --popover: #201913;
+    --popover-foreground: #f6ede0;
+    --primary: #e3a968;
+    --primary-foreground: #241a10;
+    --secondary: #2c231a;
+    --secondary-foreground: #f6ede0;
+    --muted: #2a2118;
+    --muted-foreground: #bba98f;
+    --accent: #33281d;
+    --accent-foreground: #f6ede0;
+    --destructive: #f2736a;
+    --border: rgb(246 237 224 / 12%);
+    --input: rgb(246 237 224 / 16%);
+    --ring: #c98a4b;
+    --chart-1: #e3a968;
+    --chart-2: #c98a4b;
+    --chart-3: #bba98f;
+    --chart-4: #7fa98c;
+    --chart-5: #d97867;
+    --sidebar: #201913;
+    --sidebar-foreground: #f6ede0;
+    --sidebar-primary: #e3a968;
+    --sidebar-primary-foreground: #241a10;
+    --sidebar-accent: #2c231a;
+    --sidebar-accent-foreground: #f6ede0;
+    --sidebar-border: rgb(246 237 224 / 12%);
+    --sidebar-ring: #c98a4b;
 }
 
 @layer base {
@@ -137,13 +148,14 @@
   top: auto;
   bottom: 1.25rem;
   margin-top: 0;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.625rem;
+  height: 2.625rem;
+  border: 1px solid rgb(255 255 255 / 0.3);
   border-radius: 9999px;
-  background: rgb(255 255 255 / 0.14);
+  background: rgb(23 18 13 / 0.6);
   color: #fff;
   backdrop-filter: blur(10px);
-  transition: background-color 150ms ease;
+  transition: background-color 150ms ease, color 150ms ease;
 }
 
 .hero-swiper .swiper-button-prev {
@@ -156,12 +168,13 @@
 
 .hero-swiper .swiper-button-prev:hover,
 .hero-swiper .swiper-button-next:hover {
-  background: rgb(255 255 255 / 0.24);
+  background: #e3a968;
+  color: #17120d;
 }
 
 .hero-swiper .swiper-button-prev::after,
 .hero-swiper .swiper-button-next::after {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 700;
 }
 
@@ -170,17 +183,18 @@
 }
 
 .hero-swiper .swiper-pagination-bullet {
-  width: 0.5rem;
-  height: 0.5rem;
-  background: rgb(255 255 255 / 0.55);
-  opacity: 1;
-  transition: width 200ms ease, background-color 200ms ease;
+  width: 0.5625rem;
+  height: 0.5625rem;
+  background: #fff;
+  opacity: 0.5;
+  transition: width 200ms ease, background-color 200ms ease, opacity 200ms ease;
 }
 
 .hero-swiper .swiper-pagination-bullet-active {
-  width: 1.75rem;
+  width: 1.625rem;
   border-radius: 9999px;
-  background: #fff;
+  background: #e3a968;
+  opacity: 1;
 }
 
 @media (max-width: 640px) {
